@@ -4,7 +4,7 @@ echo $this->Html->css('monokai');
 echo $this->Html->script('highlight.pack');
 ?>
 <script>hljs.initHighlightingOnLoad();</script>
-<div class="col-md-8 col-md-offset-2">
+<div class="col-md-12">
 <h1><?= h($solution->title) ?></h1>
 <p><?= $solution->description ?></p>
 <hr />
