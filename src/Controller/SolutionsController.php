@@ -7,33 +7,36 @@ class SolutionsController extends AppController
 {
     public function index()
     {
-        $solutions = $this->Solutions->find('all');
+        $solutions = $this->Solutions->find('all', array(
+             'order'=>array('FIELD(Solutions.difficulty, "Easy", "Medium", "Hard") DESC')
+            ));
+
         $this->set(compact('solutions'));
     }
     
-	public function view($id = null)
-	{
-		$solution = $this->Solutions->get($id);
-		$this->set(compact('solution'));
-	}
+    public function view($id = null)
+    {
+        $solution = $this->Solutions->get($id);
+        $this->set(compact('solution'));
+    }
 
-	public function add()
-	{
+    public function add()
+    {
 
-		$solution = $this->Solutions->newEntity();
+        $solution = $this->Solutions->newEntity();
         if ($this->request->is('post')) {
-        	
-        	$solution->link = $this->request->data('link');
-        	$solution->body = $this->request->data('body');
+            
+            $solution->link = $this->request->data('link');
+            $solution->body = $this->request->data('body');
 
-        	$scrapedData = $this->scrapeLeetData($solution->link);
+            $scrapedData = $this->scrapeLeetData($solution->link);
 
-        	$solution->title = trim(strip_tags($scrapedData[0]));
-        	$solution->description = $scrapedData[1];
-        	$solution->difficulty = trim(strip_tags($scrapedData[2]));
+            $solution->title = trim(strip_tags($scrapedData[0]));
+            $solution->description = $scrapedData[1];
+            $solution->difficulty = trim(strip_tags($scrapedData[2]));
 
-        	// $scrapedData = $this->scrapeLeetData($solution->link);
-        	// $solution->title = 
+            // $scrapedData = $this->scrapeLeetData($solution->link);
+            // $solution->title = 
             if ($this->Solutions->save($solution)) {
                 $this->Flash->success(__('Your solution has been saved.'));
                 return $this->redirect(['action' => 'add']);
@@ -42,18 +45,18 @@ class SolutionsController extends AppController
 
         }
         $this->set('solution', $solution);
-	}
-	private function scrapeLeetData($url)
-	{
-		$string = $this->getWebPage($url);
-		$html = HtmlDomParser::str_get_html($string['content']);
+    }
+    private function scrapeLeetData($url)
+    {
+        $string = $this->getWebPage($url);
+        $html = HtmlDomParser::str_get_html($string['content']);
 
-		$description = ($html->find('div.question-description'))[0];
-		$title = ($html->find('h3'))[0];
-		$difficulty = ($html->find('span.difficulty-label'))[0];
-		return [$title,$description, $difficulty];
-	}
-	 /**
+        $description = ($html->find('div.question-description'))[0];
+        $title = ($html->find('h3'))[0];
+        $difficulty = ($html->find('span.difficulty-label'))[0];
+        return [$title,$description, $difficulty];
+    }
+     /**
      * Get a web file (HTML, XHTML, XML, image, etc.) from a URL.  Return an
      * array containing the HTTP server response header fields and content.
      */
