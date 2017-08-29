@@ -1,3 +1,7 @@
 pre {
 	background-color: #f5f5f5;
 }
+
+.hljs {
+    font-size: 11px;
+}
